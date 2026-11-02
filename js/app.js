@@ -29,6 +29,7 @@ import {
   announceLogout, onLogoutElsewhere,
 } from './session.js';
 import { initPwa, isIos, isStandalone } from './pwa.js';
+import { initViewport } from './viewport.js';
 import { enablePush, disablePush, pushConfigured, isPushActive, pushResyncDue } from './push.js';
 import { requestNotificationPermission } from './permissions.js';
 import { initPublicPages, showHome, openLogin, showDecoy, isDecoyShown, clearPageHistory } from './decoy.js';
@@ -70,6 +71,7 @@ async function main() {
   applyTheme();
   showScreen('boot');
   initAudioUnlock();
+  initViewport();
   initPwa();
   initPublicPages();
   // A page restored from the back/forward cache could show a stale view: start over.

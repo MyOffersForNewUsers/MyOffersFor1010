@@ -121,7 +121,7 @@ PrivateChat/                 # repository root = GitHub Pages site root
 │   ├── style.css            # design tokens (light/dark), base, login, modals, toasts
 │   ├── chat.css             # layout, sidebar, messages, composer
 │   ├── calls.css            # incoming call + in-call screen
-│   └── responsive.css       # mobile / landscape rules
+│   └── responsive.css       # breakpoints: wide, single-pane (<=820px), phones, landscape, touch, keyboard
 ├── js/
 │   ├── firebase-config.js   # ⚠ your Firebase config, the two UIDs, VAPID key, STUN/TURN
 │   ├── firebase.js          # SDK initialisation (session-only auth, memory cache, App Check)
@@ -139,6 +139,7 @@ PrivateChat/                 # repository root = GitHub Pages site root
 │   ├── pwa.js               # service worker registration + Install App buttons  [new]
 │   ├── permissions.js       # permission checks, explanations, re-enable help   [new]
 │   ├── settings.js          # preferences, theme, devices, settings modal
+│   ├── viewport.js          # iOS on-screen keyboard: keeps header and message box visible
 │   └── ui.js                # DOM helpers, toasts, dialogs, formatting
 ├── assets/icons/            # app-icon.svg, icon-192/512.png, icon-maskable-512.png,
 │                            # apple-touch-icon.png, badge-96.png (+ old favicon.svg)
@@ -397,6 +398,13 @@ Covers: the allowlist, single active session (claim, take-over, stale tokens rej
 3. Delete your own message **for everyone**: both see "This message was deleted".
 4. Chat header 🗑 → **Delete for everyone**: both conversations become empty, also after a refresh.
 5. Settings → **Clear all chat history → Delete for me**: messages and call history are empty for you only.
+
+### 7.6b Responsive layout (phone, tablet, desktop)
+Up to 820 px wide (phones, tablets in portrait) the app is one pane: the chat fills the screen, ← shows the conversation list and recent calls, and the browser/Android Back button returns to the chat list. Wider screens show both panes side by side.
+1. Phone, portrait: tap the message box. The keyboard opens, the chat header stays at the top, the box sits directly above the keyboard and the newest message stays in view. Repeat in the installed app (PWA), and on iPhone in Safari and from the Home Screen.
+2. Turn the phone sideways during a chat, a video call and on the sign-in screen: nothing is cut off, the call buttons stay above the home indicator and the notch never covers buttons.
+3. Tap a message: the 🗑 button appears; tap the message again: it hides. Tapping next to a message never opens the delete dialog.
+4. Settings, confirmations and delete dialogs open as bottom sheets on phones and as centred dialogs on tablets and desktops.
 
 ### 7.7 Requirement checklist
 

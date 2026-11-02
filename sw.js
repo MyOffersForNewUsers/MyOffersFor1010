@@ -18,7 +18,7 @@
  */
 'use strict';
 
-const VERSION = '2.4.1';
+const VERSION = '2.5.0';
 const SHELL_CACHE = `shell-${VERSION}`;
 // The SDK URLs contain the exact version (10.12.2) and never change, so cache-first is safe.
 const SDK_CACHE = 'firebase-sdk-10.12.2';
@@ -30,7 +30,7 @@ const SHELL = [
   'css/style.css', 'css/chat.css', 'css/calls.css', 'css/responsive.css',
   'js/theme-boot.js', 'js/app.js', 'js/auth.js', 'js/firebase-config.js',
   'js/firebase.js', 'js/notifications.js', 'js/notify-config.js', 'js/permissions.js',
-  'js/push.js', 'js/pwa.js', 'js/session.js', 'js/settings.js', 'js/ui.js', 'js/decoy.js',
+  'js/push.js', 'js/pwa.js', 'js/session.js', 'js/settings.js', 'js/ui.js', 'js/decoy.js', 'js/viewport.js',
   'assets/icons/app-icon.svg', 'assets/icons/icon-192.png', 'assets/icons/badge-96.png',
 ];
 

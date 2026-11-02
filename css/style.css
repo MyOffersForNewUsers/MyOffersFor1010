@@ -39,6 +39,8 @@
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 
   color-scheme: light;
 }
@@ -79,6 +81,8 @@
 [hidden] { display: none !important; }
 
 html, body { height: 100%; }
+/* Stops iOS enlarging text in landscape. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -94,7 +98,7 @@ body {
 }
 
 button, input, textarea, select { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button { cursor: pointer; touch-action: manipulation; }
 button:disabled { cursor: not-allowed; }
 h1, h2, h3 { margin: 0; line-height: 1.2; }
 
@@ -214,8 +218,9 @@ svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 /* ---------- Login ---------- */
 .login-screen {
-  position: fixed; inset: 0; display: grid; place-items: center; padding: 20px;
-  overflow-y: auto; background: var(--bg);
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: max(20px, var(--safe-top)) max(16px, var(--safe-right)) max(20px, var(--safe-bottom)) max(16px, var(--safe-left));
+  overflow-y: auto; overscroll-behavior: contain; background: var(--bg);
 }
 .login-art { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; animation: float 16s ease-in-out infinite alternate; }
@@ -227,6 +232,9 @@ svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 .login-card {
   position: relative; width: 100%; max-width: 410px;
+  /* Auto margins (not just place-items) keep the top reachable when the card is taller
+     than a short landscape screen. */
+  margin: auto;
   padding: 34px 30px 26px; border-radius: 26px;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -252,7 +260,8 @@ body.locked #incoming-call, body.locked #call-screen, body.locked .modal, body.l
 .modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(8, 10, 20, 0.5); backdrop-filter: blur(3px); animation: fade 0.2s ease; }
 .modal-panel {
-  position: relative; width: 100%; max-width: 480px; max-height: min(88vh, 760px);
+  position: relative; width: 100%; max-width: 480px;
+  max-height: min(88vh, 760px); max-height: min(88dvh, 760px);
   display: flex; flex-direction: column;
   background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
   border: 1px solid var(--border); overflow: hidden;
@@ -261,7 +270,7 @@ body.locked #incoming-call, body.locked #call-screen, body.locked .modal, body.l
 .modal-panel.small { max-width: 380px; }
 .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 8px 22px; }
 .modal-header h2 { font-size: 19px; }
-.modal-body { padding: 8px 22px 22px; overflow-y: auto; }
+.modal-body { padding: 8px 22px 22px; overflow-y: auto; overscroll-behavior: contain; }
 .modal-body > h2 { font-size: 18px; margin: 14px 0 8px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 @keyframes fade { from { opacity: 0; } }
@@ -344,7 +353,7 @@ body.locked #incoming-call, body.locked #call-screen, body.locked .modal, body.l
 .decoy-chip.active { background: #1f2430; color: #fff; border-color: #1f2430; }
 .decoy-banner { margin: 4px 16px 14px; padding: 16px 18px; border-radius: 14px; color: #fff; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(135deg, #f97316, #e11d48); }
 .decoy-banner strong { font-size: 18px; }
-.decoy-grid { list-style: none; margin: 0; padding: 0 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; max-width: 1100px; }
+.decoy-grid { list-style: none; margin: 0; padding: 0 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; max-width: 1100px; }
 .decoy-card { display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 12px; background: #fff; border: 1px solid #ececf1; }
 .decoy-img { display: grid; place-items: center; aspect-ratio: 1; border-radius: 10px; font-size: 52px; background: var(--tone, #f1f1f4); }
 .decoy-card h3 { font-size: 13.5px; font-weight: 500; line-height: 1.3; min-height: 2.6em; }

@@ -873,6 +873,21 @@ function bindUi() {
     }
   }, { passive: true });
 
+  // The on-screen keyboard (or a rotation) shrinks the list: if the newest message was
+  // in view before, keep it in view instead of letting it slide under the composer.
+  if ('ResizeObserver' in window) {
+    const scroller = $('messages-scroller');
+    let lastHeight = scroller.clientHeight;
+    new ResizeObserver(() => {
+      const height = scroller.clientHeight;
+      if (!height) return;   // app screen hidden (e.g. locked): nothing to keep in view
+      if (height < lastHeight && scroller.scrollHeight - scroller.scrollTop - lastHeight < 80) {
+        scroller.scrollTop = scroller.scrollHeight;
+      }
+      lastHeight = height;
+    }).observe(scroller);
+  }
+
   $('scroll-bottom').addEventListener('click', () => {
     $('messages-scroller').scrollTo({ top: $('messages-scroller').scrollHeight, behavior: 'smooth' });
     newBelowCount = 0;

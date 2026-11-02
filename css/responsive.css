@@ -1,66 +1,134 @@
 /* =========================================================================
    My Offers — responsive behaviour
+   Breakpoints (width):  >=1600 wide desktop | >=1200 desktop | <=820 single-pane
+                         (phones, tablet portrait; matches mobileQuery in app.js)
+                         | <=480 phones | <=400 small phones
+   Plus: short landscape (height <=500), touch pointers, on-screen keyboard (kb-open).
    ========================================================================= */
 
 .mobile-only { display: none; }
 
-@media (max-width: 820px) {
-  .app { grid-template-columns: 1fr; }
-  .mobile-only { display: inline-grid; }
-
-  /* Two-pane layout collapses into a sliding stack: sidebar <-> chat */
-  .sidebar, .chat { grid-area: 1 / 1; transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
-  .chat { transform: translateX(100%); }
-  .app.show-chat .chat { transform: none; }
-  .app.show-chat .sidebar { transform: translateX(-28%); }
-  .sidebar { border-right: none; }
-
-  .chat-header { padding-left: 4px; gap: 8px; }
-  .chat-header .avatar { width: 38px; height: 38px; font-size: 14px; }
-  .bubble { max-width: 86%; }
-  .msg-delete { left: -36px; }
-  .messages-scroller { padding-left: 10px; padding-right: 10px; }
-  .composer { padding-left: 10px; padding-right: 10px; gap: 8px; }
-  .composer textarea { font-size: 16px; } /* >=16px prevents iOS zoom on focus */
-  .field input, .field select { font-size: 16px; }
+/* ---------- Large and ultra-wide screens ---------- */
+@media (min-width: 1600px) {
+  .app { grid-template-columns: minmax(340px, 420px) 1fr; }
 }
 
+/* Public pages: keep the content in a centred column instead of hugging the left edge. */
+@media (min-width: 1200px) {
+  .decoy { --gutter: calc((100% - 1100px) / 2 + 16px); }
+  .decoy-header, .decoy-search, .decoy-chips, .decoy-welcome { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .decoy-banner, .decoy-section, .decoy-foot, .decoy-points, .decoy-orders { margin-left: var(--gutter); margin-right: var(--gutter); }
+  .decoy-grid { padding-left: calc(var(--gutter) - 4px); padding-right: calc(var(--gutter) - 4px); max-width: none; }
+}
+
+/* ---------- Single pane: phones and tablets in portrait ---------- */
+@media (max-width: 820px) {
+  .app { grid-template-columns: 1fr; --stack: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .mobile-only { display: inline-grid; }
+
+  /* Two-pane layout collapses into a sliding stack: sidebar <-> chat. The pane that has
+     slid away also becomes invisible once the slide ends, so Tab and screen readers
+     cannot reach it. */
+  .sidebar, .chat { grid-area: 1 / 1; transition: transform var(--stack), visibility 0s; }
+  .chat { transform: translateX(100%); visibility: hidden; transition: transform var(--stack), visibility 0s 0.28s; }
+  .app.show-chat .chat { transform: none; visibility: visible; transition: transform var(--stack), visibility 0s; }
+  .app.show-chat .sidebar { transform: translateX(-28%); visibility: hidden; transition: transform var(--stack), visibility 0s 0.28s; }
+  .sidebar { border-right: none; padding-right: var(--safe-right); }
+
+  .chat-header { padding-left: calc(4px + var(--safe-left)); gap: 8px; }
+  .chat-header .avatar { width: 38px; height: 38px; font-size: 14px; }
+  .messages-scroller { padding-left: calc(10px + var(--safe-left)); padding-right: calc(10px + var(--safe-right)); }
+  .bubble { max-width: min(86%, 620px); }
+  .msg-delete { left: -36px; }
+  .msg.in .msg-delete { left: auto; right: -36px; }
+  .composer { padding-left: calc(10px + var(--safe-left)); padding-right: calc(10px + var(--safe-right)); gap: 8px; }
+  .scroll-bottom { right: calc(12px + var(--safe-right)); }
+}
+
+/* Inputs of at least 16px stop iOS zooming the page on focus. */
+@media (max-width: 820px), (pointer: coarse) {
+  .field input, .field select, .composer textarea, .decoy-search input { font-size: 16px; }
+}
+
+/* ---------- Touch screens: comfortable targets ---------- */
+@media (pointer: coarse) {
+  .link-btn { min-height: 40px; padding: 8px 10px; }
+  .decoy-header-btn, .decoy-offer-btn { min-height: 40px; }
+  .chip { min-height: 36px; }
+}
+
+/* ---------- Phones ---------- */
 @media (max-width: 480px) {
   .login-card { padding: 28px 20px 22px; border-radius: 22px; }
+  .login-brand { margin-bottom: 22px; }
+
+  /* Dialogs become bottom sheets. */
   .modal { padding: 0; align-items: end; }
-  .modal-panel { max-width: none; max-height: 92dvh; border-radius: 22px 22px 0 0; padding-bottom: var(--safe-bottom); }
-  .modal-panel.small { border-radius: 22px 22px 0 0; max-width: none; }
+  .modal-panel, .modal-panel.small {
+    max-width: none; max-height: 92vh; max-height: 92dvh;
+    border-radius: 22px 22px 0 0; padding-bottom: var(--safe-bottom);
+  }
+  .modal-header { padding: 14px 10px 6px 18px; }
+  .modal-body { padding: 6px 18px 18px; }
+  .modal-actions:not(.stack) > .btn { flex: 1; }
+  .inline-form { flex-direction: column; align-items: stretch; }
+
   .call-controls { gap: 12px; padding: 10px 14px; }
   .round-btn { width: 56px; height: 56px; }
   .avatar.xl { width: 92px; height: 92px; font-size: 32px; }
-  .inline-form { flex-direction: column; align-items: stretch; }
-}
-
-/* Landscape phones: keep call UI usable in short viewports */
-@media (max-height: 500px) and (orientation: landscape) {
-  .call-center { top: 10%; }
-  .call-center .avatar.xl { width: 64px; height: 64px; font-size: 24px; }
-  .call-center h2 { margin-top: 12px; font-size: 20px; }
-  .call-controls { bottom: calc(12px + var(--safe-bottom)); }
-  .local-preview { width: clamp(90px, 16vw, 160px); aspect-ratio: 4 / 3; top: calc(48px + var(--safe-top)); }
-  .incoming-card { padding: 20px; }
-  .incoming-card h2 { margin-top: 12px; }
-  .incoming-actions { margin-top: 18px; }
-}
-
-@media (hover: none) {
-  .msg-delete { opacity: 0; }
-  .msg.show-actions .msg-delete { opacity: 1; }
-}
-
-@media (max-width: 820px) {
-  .msg.in .msg-delete { left: auto; right: -36px; }
+  .incoming-card { padding: 34px 20px 26px; }
 }
 
 /* Small phones: four header actions (call, video, delete, settings) leave room for the name. */
 @media (max-width: 400px) {
-  .chat-header { gap: 6px; padding-right: 6px; }
+  .chat-header { gap: 6px; padding-right: calc(6px + var(--safe-right)); }
+  .chat-header .avatar { width: 34px; height: 34px; font-size: 13px; }
   .chat-header .header-actions { gap: 0; }
   .chat-header .header-actions .icon-btn { width: 36px; height: 36px; }
   .chat-header .header-actions .icon-btn svg { width: 20px; height: 20px; }
+  .sidebar-header { padding-left: 12px; }
+  .decoy-points { gap: 6px; }
+  .decoy-points > div { padding: 10px 8px; }
+  .call-controls { gap: 10px; }
 }
+
+/* ---------- Short landscape screens (phones turned sideways) ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sidebar-header { padding-top: 8px; padding-bottom: 8px; }
+  .chat-header { padding-top: calc(6px + var(--safe-top)); padding-bottom: 6px; }
+  .composer { padding-top: 6px; padding-bottom: calc(6px + var(--safe-bottom)); }
+  .composer textarea { max-height: 96px; }
+  .messages-empty, .messages-error { margin-top: 4vh; }
+
+  .login-card { padding: 22px 24px 18px; }
+  .login-brand { margin-bottom: 14px; }
+  .modal-panel { max-height: 94vh; max-height: 94dvh; }
+
+  .call-center { top: 10%; }
+  .call-center .avatar.xl, .incoming-card .avatar.xl { width: 64px; height: 64px; font-size: 24px; }
+  .call-center h2 { margin-top: 12px; font-size: 20px; }
+  .call-controls { bottom: calc(12px + var(--safe-bottom)); }
+  .enable-audio { bottom: calc(96px + var(--safe-bottom)); }
+  .local-preview { width: clamp(90px, 16vw, 160px); aspect-ratio: 4 / 3; top: calc(48px + var(--safe-top)); }
+  .incoming-card { padding: 20px; }
+  .incoming-card h2 { margin-top: 12px; font-size: 20px; }
+  .incoming-actions { margin-top: 18px; }
+}
+
+/* A landscape screen shows the whole picture (a phone's portrait video would otherwise be
+   cropped to a thin band); portrait screens keep filling the screen. */
+@media (orientation: landscape) {
+  .remote-video { object-fit: contain; }
+}
+
+/* ---------- On-screen keyboard open on iOS (js/viewport.js) ---------- */
+/* Pin full-screen layers to the visible area so the header stays put and the message
+   box sits right above the keyboard. */
+:root.kb-open .app,
+:root.kb-open .modal,
+:root.kb-open .login-screen {
+  bottom: auto; height: var(--vv-height); transform: translateY(var(--vv-top));
+}
+/* The keyboard covers the home indicator: no extra bottom inset needed. */
+:root.kb-open .composer { padding-bottom: 8px; }
+:root.kb-open .sidebar, :root.kb-open .modal-panel { padding-bottom: 0; }
