@@ -23,7 +23,9 @@
 
 /* ---------- Single pane: phones and tablets in portrait ---------- */
 @media (max-width: 820px) {
-  .app { grid-template-columns: 1fr; --stack: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  /* minmax(0, …): a plain 1fr track never shrinks below its content, which made both
+     panes ~350px wide (wider than the screen) on 320px phones. */
+  .app { grid-template-columns: minmax(0, 1fr); --stack: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
   .mobile-only { display: inline-grid; }
 
   /* Two-pane layout collapses into a sliding stack: sidebar <-> chat. The pane that has
@@ -75,6 +77,10 @@
 
   .call-controls { gap: 12px; padding: 10px 14px; }
   .round-btn { width: 56px; height: 56px; }
+  /* The status pills can wrap to two rows here: keep the self-view below them. */
+  .call-topbar { gap: 6px; }
+  .call-pill { padding: 5px 10px; font-size: 12.5px; }
+  .local-preview { top: calc(92px + var(--safe-top)); }
   .avatar.xl { width: 92px; height: 92px; font-size: 32px; }
   .incoming-card { padding: 34px 20px 26px; }
 }

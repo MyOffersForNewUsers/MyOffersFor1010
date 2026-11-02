@@ -324,7 +324,7 @@ body.locked #incoming-call, body.locked #call-screen, body.locked .modal, body.l
 .toast.error .toast-icon { background: var(--danger); }
 .toast.warning .toast-icon { background: var(--warning); }
 .toast .toast-text { flex: 1; overflow-wrap: anywhere; }
-.toast button { border: none; background: none; color: var(--text-3); padding: 0 2px; }
+.toast button { border: none; background: none; color: var(--text-3); padding: 0; min-width: 32px; min-height: 32px; margin: -8px -6px -8px 0; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-10px); } }
 @keyframes toast-out { to { opacity: 0; transform: translateY(-10px); } }
 
